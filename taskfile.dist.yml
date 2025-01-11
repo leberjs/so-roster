@@ -1,0 +1,22 @@
+version: '3'
+
+dotenv: ['.env']
+
+tasks:
+  db:bootstrap:
+    cmds:
+      - ./scripts/bootstrap_db.sh
+    generates:
+      - out/roster.db
+
+  db:sync:
+    cmds:
+      - aws s3api put-object --bucket $BUCKET_NAME --key db/roster.db --body out/roster.db --if-none-match "*"
+
+  deploy:
+    cmds:
+      - cdk deploy SORosterStack
+
+  destroy:
+    cmds:
+      - cdk destroy SORosterStack
